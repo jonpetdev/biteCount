@@ -1,16 +1,13 @@
 package com.app.controller;
 
 
-import com.app.model.BusinessUnit;
 import com.app.model.Done;
 import com.app.model.GetFromPageBite;
-import com.app.repository.BusinessUnitRep;
-import com.app.repository.CommunicationPlanRep;
-import com.app.repository.DoneRep;
+import com.app.model.LimitsBite;
+import com.app.repository.*;
 import com.app.service.DoneFileBaseService;
 import com.app.service.DoneService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +38,16 @@ public class InfoController {
     @Autowired
     CommunicationPlanRep communicationPlanRep;
 
+    @Autowired
+    InfoClientBiteRep infoClientBiteRep;
+
+    @Autowired
+    GetFromPageBiteRep getFromPageBiteRep;
+
+    @Autowired
+    LimitsRep limitsRep;
+
+
     @RequestMapping(value={"/"}, method= RequestMethod.GET)
     public String first (Model model){
 
@@ -48,11 +55,18 @@ public class InfoController {
     }
 
     @RequestMapping(value = {"/home"}, method = RequestMethod.GET)
-    public String textRe(Model model, HttpServletRequest request) throws IOException, InvalidFormatException {
+    public String textRe(Model model, HttpServletRequest request){
+
         GetFromPageBite bite = (GetFromPageBite) model.asMap().get("bite");
+        String noFile= (String) model.asMap().get("nera");
+        model.addAttribute("nera", noFile);
         try {
-            model.addAttribute("vidurkis", doneFileBaseService.sumaPoNuolaidu(request, bite));
-            model.addAttribute("tikrinam",doneFileBaseService.tikrinam(request, bite));
+
+            model.addAttribute("modelis",doneFileBaseService.paskirstymas(bite.getDate()));
+            model.addAttribute("data", bite.getDate());
+            model.addAttribute("tikrinam",doneFileBaseService.tikrinam(bite.getDate()));
+            model.addAttribute("nuolaidos",doneFileBaseService.nuolaidos(bite.getDate()));
+            model.addAttribute("ponuolaidos",doneFileBaseService.bendraPoNuolaidu(doneFileBaseService.paskirstymas(bite.getDate())));
         }catch (NullPointerException e){
 
         }
@@ -61,9 +75,37 @@ public class InfoController {
     }
 
     @RequestMapping(value = "/home", method = RequestMethod.POST)
-    public String form(@ModelAttribute("getFromPage") GetFromPageBite bite, RedirectAttributes redirectAttrs, HttpServletRequest request) throws IOException {
-        doneFileBaseService.multipartFile(request, bite.getFile());
+    public String form(@ModelAttribute("getFromPage") GetFromPageBite bite, RedirectAttributes redirectAttrs, HttpServletRequest request) throws IOException, InvalidFormatException {
+        if (bite.getFile().isEmpty()) {
+            System.out.println("nera failo");
+            bite.setFile(null);
+            redirectAttrs.addFlashAttribute("nera", "*Pasirinkite failą");
+            if (bite.getProcSMS() == null) {
+                System.out.println("nera proc3");
+            }
+            if (bite.getProcSkambuciams() == null) {
+                System.out.println("nera proc2");
+            }
+            if (bite.getProcSaskaita() == null) {
+                System.out.println("nera proc1");
+            }
+
+        }else{
+            if (bite.getProcSMS() == null) {
+                System.out.println("nera proc3");
+            }else
+            if (bite.getProcSkambuciams() == null) {
+                System.out.println("nera proc2");
+            }else
+            if (bite.getProcSaskaita() == null) {
+                System.out.println("nera proc1");
+            }else{
+            getFromPageBiteRep.save(bite);
+            doneFileBaseService.mainListas(request, bite);
+            }
+        }
         redirectAttrs.addFlashAttribute("bite", bite);
+
 
         return "redirect:/home";
     }
@@ -115,6 +157,17 @@ public class InfoController {
 
         return "redirect:/viewnaudotojai";
     }
+
+
+    //----get file unit wide client
+    @RequestMapping(value = "/home/{imone}/{data}/view",method = RequestMethod.GET)
+    public String viewAllForUnit(@PathVariable("imone") String imone,@PathVariable("data") String data, HttpServletRequest request, Model model) throws IOException, InvalidFormatException {
+        model.addAttribute("listas",infoClientBiteRep.findInfoClientBitesByDateAndImone(data, imone));
+        model.addAttribute("limitas",limitsRep.findById(3l).get());
+
+        return "viewinfoclient";
+    }
+
 
 
 }

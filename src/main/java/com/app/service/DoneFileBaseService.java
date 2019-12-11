@@ -14,17 +14,14 @@ import java.util.List;
 
 public interface DoneFileBaseService {
 
-    public List<DoneFileBase> bitListas(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException;
+    public void mainListas(HttpServletRequest request, GetFromPageBite bite) throws IOException, InvalidFormatException;
 
-    public Sumos bendraSaskaitosSuma(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException;
+    public List<Count> paskirstymas(String date);
 
-    public List<Count> sumaImonems(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException;
+    public Float tikrinam(String data);
 
-    public Float tikrinam(HttpServletRequest request, GetFromPageBite bite) throws IOException, InvalidFormatException;
+    public Float nuolaidos(String data);
 
-    public List<Count> sumaPagal(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException;
+    public Float bendraPoNuolaidu(List<Count> paskirstymas);
 
-    public List<Count> sumaPoNuolaidu(HttpServletRequest request, GetFromPageBite bite) throws IOException, InvalidFormatException;
-
-    void multipartFile(HttpServletRequest request, MultipartFile file);
 }

@@ -16,7 +16,6 @@ public class Done {
     private String pareigybe;
     private String imone;
 
-
     public Done(){
 
     }
@@ -76,4 +75,6 @@ public class Done {
     public void setImone(String imone) {
         this.imone = imone;
     }
+
+
 }

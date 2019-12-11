@@ -2,12 +2,30 @@ package com.app.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.*;
+
+@Entity(name="nuolaidos")
 public class GetFromPageBite {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Float procSaskaita;
     private Float procSkambuciams;
     private Float procSMS;
+    private String date;
+
+    @Transient
     private MultipartFile file;
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Float getProcSaskaita() {
         return procSaskaita;
@@ -39,5 +57,13 @@ public class GetFromPageBite {
 
     public void setFile(MultipartFile file) {
         this.file = file;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

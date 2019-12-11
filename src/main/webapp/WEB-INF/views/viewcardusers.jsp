@@ -66,7 +66,6 @@
                     <td>${clients.pareigybe}</td>
                     <td>${clients.imone}</td>
 
-
                     <td>
                         <div class="btn-group">
                                 <button onclick="window.location.href='viewcardusers/${clients.getId()}/delete'"  class="btn btn-danger">Delete</button>

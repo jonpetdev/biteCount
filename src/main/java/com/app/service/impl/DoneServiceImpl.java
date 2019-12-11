@@ -20,10 +20,28 @@ public class DoneServiceImpl implements DoneService {
     DoneRep doneRep;
 
 
+
     public List<Done> getinam(){
         return doneRep.findAll();
     }
 
+    @Override
+    public Done findByImone(String imone) {
+        return doneRep.findByImone(imone);
+    }
+
+
+
+
+    @Override
+    public Long pagalNR(Long numeris){
+        for(Done done: doneRep.findAll()){
+            if(done.getNumeris().equals(numeris)){
+                return done.getId();
+            }
+        }
+        return 0L;
+    }
 
 
 }

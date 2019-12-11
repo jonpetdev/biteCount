@@ -4,21 +4,35 @@ public class DoneFileBase {
 
     private Long numeris;
     private String mokejimoPlanas;
-    private Float menesioMokesčiai;
+    private Float menesioMokesciai;
+    private Float skambLT;
+    private Float skambUZ;
+    private Float smsLT;
+    private Float smsUZ;
+    private Float internetas;
+    private Float kitos;
     private Float nuolaidos;
     private Float automobilioStatymas;
     private Float sumaBePVM;
     private Float sumaSuPVM;
 
 
-    public DoneFileBase(Long numeris, String mokejimoPlanas, Float menesioMokesčiai, Float nuolaidos, Float automobilioStatymas, Float sumaBePVM, Float sumaSuPVM){
+    public DoneFileBase(Long numeris, String mokejimoPlanas, Float menesioMokesciai, Float nuolaidos,
+                        Float automobilioStatymas, Float sumaBePVM, Float sumaSuPVM,
+                        Float skambLT, Float skambUZ, Float smsLT, Float smsUZ, Float internetas, Float kitos){
         this.numeris=numeris;
         this.mokejimoPlanas=mokejimoPlanas;
-        this.menesioMokesčiai=menesioMokesčiai;
+        this.menesioMokesciai=menesioMokesciai;
         this.nuolaidos=nuolaidos;
         this.automobilioStatymas=automobilioStatymas;
         this.sumaBePVM=sumaBePVM;
         this.sumaSuPVM=sumaSuPVM;
+        this.skambLT=skambLT;
+        this.skambUZ=skambUZ;
+        this.smsLT=smsLT;
+        this.smsUZ=smsUZ;
+        this.internetas=internetas;
+        this.kitos=kitos;
     }
 
     public Long getNumeris() {
@@ -37,12 +51,12 @@ public class DoneFileBase {
         this.mokejimoPlanas = mokejimoPlanas;
     }
 
-    public Float getMenesioMokesčiai() {
-        return menesioMokesčiai;
+    public Float getMenesioMokesciai() {
+        return menesioMokesciai;
     }
 
-    public void setMenesioMokesčiai(Float menesioMokesčiai) {
-        this.menesioMokesčiai = menesioMokesčiai;
+    public void setMenesioMokesciai(Float menesioMokesciai) {
+        this.menesioMokesciai = menesioMokesciai;
     }
 
     public Float getNuolaidos() {
@@ -75,5 +89,53 @@ public class DoneFileBase {
 
     public void setSumaSuPVM(Float sumaSuPVM) {
         this.sumaSuPVM = sumaSuPVM;
+    }
+
+    public Float getSkambLT() {
+        return skambLT;
+    }
+
+    public void setSkambLT(Float skambLT) {
+        this.skambLT = skambLT;
+    }
+
+    public Float getSkambUZ() {
+        return skambUZ;
+    }
+
+    public void setSkambUZ(Float skambUZ) {
+        this.skambUZ = skambUZ;
+    }
+
+    public Float getSmsLT() {
+        return smsLT;
+    }
+
+    public void setSmsLT(Float smsLT) {
+        this.smsLT = smsLT;
+    }
+
+    public Float getSmsUZ() {
+        return smsUZ;
+    }
+
+    public void setSmsUZ(Float smsUZ) {
+        this.smsUZ = smsUZ;
+    }
+
+    public Float getInternetas() {
+        return internetas;
+    }
+
+    public void setInternetas(Float internetas) {
+        this.internetas = internetas;
+    }
+
+    public Float getKitos() {
+        return kitos;
+    }
+
+    public void setKitos(Float kitos) {
+        this.kitos = kitos;
     }
 }

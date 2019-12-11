@@ -31,14 +31,18 @@
 
             <form:input class="formaIn" path="procSMS" placeholder="Procentine nuolaida SMS"/>
 
+            <form:input class="formaIn" path="date" placeholder="data"/>
+
             <form:input  path="file" type="file" name="file"/>
+            <h1>${nera}</h1>
 
             <button class="btn btn-success" type="submit">Submit</button>
 
         </form:form>
     </div>
 </div>
-<c:if test="${not empty vidurkis}">
+
+<c:if test="${not empty modelis}">
 <div class="container">
 
     <table class="table table-striped table-light" id="myTable">
@@ -49,10 +53,10 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${vidurkis}" var="modelis">
+        <c:forEach items="${modelis}" var="modelis">
 
             <tr>
-                <td>${modelis.imone}</td>
+                <td><a href="${contextPath}/home/${modelis.imone}/${data}/view">${modelis.imone} </a></td>
                 <td>${modelis.sumaSuPVM}</td>
             </tr>
 
@@ -60,8 +64,9 @@
         </tbody>
     </table>
 
-
-    <h1>${tikrinam}</h1>
+    <h1>Viso: ${tikrinam}</h1>
+    <h1>Nuolaidos: ${nuolaidos}</h1>
+    <h1>Bendra Po Nuolaidu: ${ponuolaidos}</h1>
 
 </div>
 </c:if>

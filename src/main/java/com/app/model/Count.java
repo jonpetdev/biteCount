@@ -3,12 +3,11 @@ package com.app.model;
 public class Count {
 
     private String imone;
-    private Float sumaBePVM;
+
     private Float sumaSuPVM;
 
-    public Count(String imone, Float sumaBePVM, Float sumaSuPVM){
+    public Count(String imone, Float sumaSuPVM){
         this.imone=imone;
-        this.sumaBePVM=sumaBePVM;
         this.sumaSuPVM=sumaSuPVM;
     }
 
@@ -20,13 +19,6 @@ public class Count {
         this.imone = imone;
     }
 
-    public Float getSumaBePVM() {
-        return sumaBePVM;
-    }
-
-    public void setSumaBePVM(Float sumaBePVM) {
-        this.sumaBePVM = sumaBePVM;
-    }
 
     public Float getSumaSuPVM() {
         return sumaSuPVM;

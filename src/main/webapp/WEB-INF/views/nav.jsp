@@ -16,6 +16,7 @@
             <div class="dropdown-content1">
                 <a href="${contextPath}/home">Bitės sąskaitos paskirstymas</a>
                 <a href="${contextPath}/viewnaudotojai">Bitės naudotojų sarašas</a>
+                <a href="${contextPath}/viewlimitai">Bitės limitai</a>
             </div>
         </div>
     </div>

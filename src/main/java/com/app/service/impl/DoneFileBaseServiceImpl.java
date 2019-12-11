@@ -1,7 +1,10 @@
 package com.app.service.impl;
 
 import com.app.model.*;
+import com.app.repository.BusinessUnitRep;
 import com.app.repository.DoneRep;
+import com.app.repository.GetFromPageBiteRep;
+import com.app.repository.InfoClientBiteRep;
 import com.app.service.DoneFileBaseService;
 import com.app.service.DoneService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -28,11 +31,24 @@ public class DoneFileBaseServiceImpl implements DoneFileBaseService {
     @Autowired
     DoneRep doneRep;
 
+    @Autowired
+    BusinessUnitRep businessUnitRep;
+
+    @Autowired
+    InfoClientBiteRep infoClientBiteRep;
+
+    @Autowired
+    GetFromPageBiteRep getFromPageBiteRep;
+
+// ----------------bandom tvarkyti visa nesamone parasyta auksciau
+
+
+
     @Override
-    public List<DoneFileBase> bitListas(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException {
-        List<DoneFileBase> bitListas = new ArrayList<>();
+    public void mainListas(HttpServletRequest request, GetFromPageBite bite) throws IOException, InvalidFormatException {
+        List<DoneFileBase> doneBaseListas = new ArrayList<>();
         String rootDirectory = request.getSession().getServletContext().getRealPath("/");
-        String filename = fileN.getOriginalFilename();
+        String filename = bite.getFile().getOriginalFilename();
         Workbook workbook = WorkbookFactory.create(new File(rootDirectory + "resources/"+filename));
         Sheet sheet = workbook.getSheetAt(0);
 
@@ -42,139 +58,98 @@ public class DoneFileBaseServiceImpl implements DoneFileBaseService {
 
             try {
 
-                bitListas.add(new DoneFileBase(
+                doneBaseListas.add(new DoneFileBase(
                         Long.parseLong(dataFormatter.formatCellValue(row.getCell(0)).replaceAll(" ","")),
                         dataFormatter.formatCellValue(row.getCell(1)),
                         Float.parseFloat(dataFormatter.formatCellValue(row.getCell(3))),
                         Float.parseFloat(dataFormatter.formatCellValue(row.getCell(16)).replaceAll("-","")),
                         Float.parseFloat(dataFormatter.formatCellValue(row.getCell(18))),
                         Float.parseFloat(dataFormatter.formatCellValue(row.getCell(30))),
-                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(32)))));
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(32))),
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(4))),
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(9))),
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(5))),
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(10))),
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(8))),
+                        Float.parseFloat(dataFormatter.formatCellValue(row.getCell(6)))
+                ));
             }catch (NumberFormatException e){
 
             }catch (NullPointerException e){
 
             }
         }
-        return bitListas;
-    }
 
-    @Override
-    public Sumos bendraSaskaitosSuma(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException {
-        List<DoneFileBase>bitListas=bitListas(request,fileN);
-        Float sumaSuPVM=0.0F;
-        Float sumaBePVM=0.0F;
-
-        for(DoneFileBase el: bitListas){
-            sumaSuPVM= sumaSuPVM+el.getSumaSuPVM();
-            sumaBePVM= sumaBePVM+el.getSumaBePVM();
-        }
-        return new Sumos(sumaBePVM, sumaSuPVM);
-    }
-
-    @Override
-    public List<Count> sumaImonems(HttpServletRequest request, MultipartFile fileN) throws IOException, InvalidFormatException {
-        List<DoneFileBase>doneFileBaseServiceList= bitListas(request, fileN);
-
-        List<Count> countList=new ArrayList<>();
-        boolean taip=false;
-        for(DoneFileBase doneFile: doneFileBaseServiceList){
-            for(Done done: doneService.getinam()){
-                if(doneFile.getNumeris().equals(done.getNumeris()) && taip==false){
-                    countList.add(new Count(done.getImone(), doneFile.getSumaBePVM(), doneFile.getSumaSuPVM()));
-                    taip=true;
-                }
+        for(DoneFileBase dfb: doneBaseListas){
+            Done done = new Done();
+            Boolean doneBool=false;
+            if(doneService.pagalNR(dfb.getNumeris())!=0L){
+                done = doneRep.getOne(doneService.pagalNR(dfb.getNumeris()));
+                doneBool = true;
             }
-            if(taip==false){
-                countList.add(new Count(": Nėra priskirtos įmonės: ",doneFile.getSumaBePVM(),doneFile.getSumaSuPVM()));
+
+            if(doneBool){
+                infoClientBiteRep.save(new InfoClientBite( dfb.getNumeris(),bite.getDate(),done.getImone(), done.getNaudotojas(),
+                         done.getMokejimoPlanas(),
+                        dfb.getSkambLT(), dfb.getSkambUZ(), dfb.getSmsLT(),
+                        dfb.getSmsUZ(), dfb.getInternetas(), dfb.getKitos(), dfb.getAutomobilioStatymas(),
+                        dfb.getSumaSuPVM()));
+            }else {
+                infoClientBiteRep.save(new InfoClientBite( dfb.getNumeris(), bite.getDate(), "Nėra info", "Nėra info",
+                        "Nėra info",
+                            dfb.getSkambLT(), dfb.getSkambUZ(), dfb.getSmsLT(),
+                            dfb.getSmsUZ(), dfb.getInternetas(), dfb.getKitos(), dfb.getAutomobilioStatymas(),
+                            dfb.getSumaSuPVM()));
             }
-            taip=false;
 
         }
-        return countList;
+
     }
 
     @Override
-    public Float tikrinam(HttpServletRequest request, GetFromPageBite bite) throws IOException, InvalidFormatException {
-        List<Count>list=sumaPoNuolaidu(request, bite);
-        Float suma=0.0F;
-        for(Count el:list){
-            suma=suma+el.getSumaSuPVM();
+    public List<Count> paskirstymas(String date){
+        List<Count> counts= new ArrayList<>();
+
+        Float bendraSuma=tikrinam(date);
+        Float berdraSuNuolaida=bendraSuma-nuolaidos(date);
+
+        for(BusinessUnit businessUnit: businessUnitRep.findAll()){
+            Float suma=0.0f;
+            for(InfoClientBite info : infoClientBiteRep.findInfoClientBitesByDateAndImone(date,businessUnit.getName())){
+                suma=suma+info.getSumaSuPVM();
+            }
+            suma=(suma/bendraSuma)*berdraSuNuolaida;
+            counts.add(new Count(businessUnit.getName(),suma));
+        }
+
+        return counts;
+    }
+
+    @Override
+    public Float tikrinam(String data){
+        Float suma=0.0f;
+        for(InfoClientBite info: infoClientBiteRep.findInfoClientBitesByDate(data)){
+            suma=suma+info.getSumaSuPVM();
         }
         return suma;
     }
 
     @Override
-    public List<Count> sumaPagal(HttpServletRequest request,MultipartFile fileN) throws IOException, InvalidFormatException {
-        List<Count> listCount= sumaImonems(request,fileN);
-        List<String> list=new ArrayList<>();
+    public Float nuolaidos(String data){
+         return  getFromPageBiteRep.findGetFromPageBiteByDate(data).getProcSaskaita()+
+                 getFromPageBiteRep.findGetFromPageBiteByDate(data).getProcSkambuciams()+
+                 getFromPageBiteRep.findGetFromPageBiteByDate(data).getProcSMS();
 
-        for(Count count: listCount){
-            if(!list.contains(count.getImone())) {
-                list.add(count.getImone());
-
-            }
-        }
-
-        List<Count> listukas=new ArrayList<>();
-        for(String str: list) {
-            Float sumaBePVM=0.0F;
-            Float sumaSuPVM=0.0F;
-            for (Count cc : listCount) {
-                if(str.equals(cc.getImone())){
-                sumaBePVM=sumaBePVM+cc.getSumaBePVM();
-                sumaSuPVM=sumaSuPVM+cc.getSumaSuPVM();
-                }
-            }
-            listukas.add(new Count(str,sumaBePVM,sumaSuPVM));
-        }
-
-
-        return listukas;
     }
 
     @Override
-    public List<Count> sumaPoNuolaidu(HttpServletRequest request, GetFromPageBite bite) throws IOException, InvalidFormatException {
-        List<Count> priesNuolaidas=sumaPagal(request, bite.getFile());
-        Sumos sumos=bendraSaskaitosSuma(request, bite.getFile());
-        List<Count>list=new ArrayList<>();
-
-        Float nuolaidosSuPVM=bite.getProcSaskaita()+bite.getProcSkambuciams()+bite.getProcSMS();
-        Float nuolaidosBePVM=nuolaidosSuPVM*0.79F;
-
-
-        for(Count count:priesNuolaidas){
-            float bePVM;
-            float suPVM;
-            suPVM=nuolaidosSuPVM*((count.getSumaSuPVM()*100)/sumos.getBendraSumaSuPVM())/100;
-            suPVM=count.getSumaSuPVM()-suPVM;
-            bePVM=nuolaidosBePVM*((count.getSumaBePVM()*100)/sumos.getBendraSumaBePVM())/100;
-            bePVM=count.getSumaBePVM()-bePVM;
-
-            list.add(new Count(count.getImone(),bePVM,suPVM));
-
+    public Float bendraPoNuolaidu(List<Count> paskirstymas){
+        Float suma=0.0f;
+        for(Count count:paskirstymas){
+            suma=suma+count.getSumaSuPVM();
         }
 
-
-        return list;
-    }
-
-
-    @Override
-    public void multipartFile(HttpServletRequest request, MultipartFile file) {
-        String rootDirectory = request.getSession().getServletContext().getRealPath("/");
-        String filename = file.getOriginalFilename();
-        try {
-            new File(rootDirectory + "resources/").mkdir();
-            byte barr[] = file.getBytes();
-            BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(rootDirectory + "resources/" + filename));
-            bout.write(barr);
-            bout.flush();
-            bout.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
+        return suma;
     }
 
 

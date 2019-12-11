@@ -1,14 +1,10 @@
 package com.app.repository;
 
-
-
-import com.app.model.Done;
+import com.app.model.LimitsBite;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DoneRep extends JpaRepository<Done, Long> {
-
-    Done findByImone(String imone);
+public interface LimitsRep extends JpaRepository<LimitsBite,Long> {
 
 }
