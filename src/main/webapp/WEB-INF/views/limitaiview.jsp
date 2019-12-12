@@ -33,7 +33,9 @@
             <th scope="col">Internetas</th>
             <th scope="col">Kitos</th>
             <th scope="col">Automobilio statymas</th>
-            <th scope="col"><button  type="button" class="btn btn-success" onclick="window.location.href='addlimitai'">Create Limits</button></th>
+            <th scope="col">
+          <!--      <button  type="button" class="btn btn-success" onclick="window.location.href='addlimitai'">Create Limits</button>  -->
+            </th>
 
         </tr>
         </thead>
@@ -64,7 +66,7 @@
                 </td>
                 <td>
                     <div class="btn-group">
-                        <button onclick="window.location.href='limitaiview/${limit.getId()}/delete'"  class="btn btn-danger">Delete</button>
+                     <!--   <button onclick="window.location.href='limitaiview/${limit.getId()}/delete'"  class="btn btn-danger">Delete</button> -->
                     <button onclick="window.location.href='limitaiview/${limit.id}/update'"  class="btn btn-primary">Edit</button>
                     </div>
                 </td>

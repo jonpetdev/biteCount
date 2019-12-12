@@ -31,12 +31,13 @@
 
             <form:input class="formaIn" path="procSMS" placeholder="Procentine nuolaida SMS"/>
 
-            <form:input class="formaIn" path="date" placeholder="data"/>
-
-            <form:input  path="file" type="file" name="file"/>
-            <h1>${nera}</h1>
+            <form:input class="formaIn" path="date"  placeholder="YYYY-mm" required="required"/>
 
             <button class="btn btn-success" type="submit">Submit</button>
+            <br>
+            <form:input  path="file" type="file" name="file"/>
+
+
 
         </form:form>
     </div>

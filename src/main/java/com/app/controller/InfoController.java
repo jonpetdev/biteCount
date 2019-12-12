@@ -59,7 +59,6 @@ public class InfoController {
 
         GetFromPageBite bite = (GetFromPageBite) model.asMap().get("bite");
         String noFile= (String) model.asMap().get("nera");
-        model.addAttribute("nera", noFile);
         try {
 
             model.addAttribute("modelis",doneFileBaseService.paskirstymas(bite.getDate()));
@@ -79,30 +78,12 @@ public class InfoController {
         if (bite.getFile().isEmpty()) {
             System.out.println("nera failo");
             bite.setFile(null);
-            redirectAttrs.addFlashAttribute("nera", "*Pasirinkite failą");
-            if (bite.getProcSMS() == null) {
-                System.out.println("nera proc3");
-            }
-            if (bite.getProcSkambuciams() == null) {
-                System.out.println("nera proc2");
-            }
-            if (bite.getProcSaskaita() == null) {
-                System.out.println("nera proc1");
-            }
 
         }else{
-            if (bite.getProcSMS() == null) {
-                System.out.println("nera proc3");
-            }else
-            if (bite.getProcSkambuciams() == null) {
-                System.out.println("nera proc2");
-            }else
-            if (bite.getProcSaskaita() == null) {
-                System.out.println("nera proc1");
-            }else{
+
             getFromPageBiteRep.save(bite);
             doneFileBaseService.mainListas(request, bite);
-            }
+
         }
         redirectAttrs.addFlashAttribute("bite", bite);
 
